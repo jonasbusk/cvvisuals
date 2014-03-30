@@ -1,6 +1,7 @@
 import cv2
 
 import camera as cam
+import visualfx as vis
 
 def main():
   cam.init()
@@ -10,7 +11,7 @@ def main():
     img = cam.read()
 
     # Our operations on the frame come here
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = vis.gray(img)
 
     # Display the resulting frame
     cv2.imshow('frame',gray)
