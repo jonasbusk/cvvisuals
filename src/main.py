@@ -6,6 +6,7 @@ import display as dis
 
 def main():
   cam.init()
+  dis.init(1024, 768)
 
   while(True):
     # Capture frame-by-frame
