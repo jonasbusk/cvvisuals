@@ -20,7 +20,8 @@ def resize(img):
 
 def show(img):
   if H != None:
-    img = hom.forwardmap(img, H)
+    #img = hom.forwardmap(img, H)
+    img = hom.backmap(img, H)
 
   img = resize(img)
   cv2.imshow('display', img)

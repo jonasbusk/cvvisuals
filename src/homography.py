@@ -6,7 +6,7 @@ from matplotlib.pyplot import *
 from scipy import *
 import math
 
-# to homogeneus
+# to homogeneus coordinates
 def toHom(points):
     N = len(points)
     hom = zeros((3, N))
@@ -63,49 +63,16 @@ def mapPoint(H, (x, y)):
     p[1][0] = y
     p[2][0] = 1.0
 
-    #print p
     p = dot(H, p)
-    #print p
     p = p / p[2][0]
-    #print p
-    #p = p.astype(np.int32)
-    #print p
-
     return (p[0][0], p[1][0])
-
-
-# def getHomographyFromMousePoints(I1, I2, N):
-#     # TODO: remove hard coded points
-#     mp1 = getMousePoints(I1, N)
-#     mp2 = getMousePoints(I2, N)
-#
-#     # Create homogene first matrix
-#     p1 = zeros((3, N))
-#     for i in range(N):
-#         (x, y) = mp1[i]
-#         p1[0][i] = x
-#         p1[1][i] = y
-#         p1[2][i] = 1
-#
-#     # Create homogene second matrix
-#     p2 = zeros((3, N))
-#     for i in range(N):
-#         (x, y) = mp2[i]
-#         p2[0][i] = x
-#         p2[1][i] = y
-#         p2[2][i] = 1
-#
-#     return H_from_points(p1, p2)
 
 
 def get_H(I):
   h, w = I.shape[:2]
-  tp = [(0, 0), (w, 0), (0, h), (w, h)]
-  #fp = [(0, 0), (w, 0), (0, h), (w, h)]
-  fp = getMousePoints(I, 4)
-
-  H = H_from_points(toHom(fp), toHom(tp))
-  return H
+  fp = [(0, 0), (w, 0), (0, h), (w, h)]
+  tp = getMousePoints(I, 4)
+  return H_from_points(toHom(fp), toHom(tp))
 
 
 def getMousePoints(I, N):
@@ -116,7 +83,6 @@ def getMousePoints(I, N):
 
     fig.hold('on')
     points = ginput(N)
-    #print list(points)
 
     for (x, y) in points:
         plt.plot(x, y)
@@ -127,16 +93,28 @@ def getMousePoints(I, N):
 
 def forwardmap(I, H):
   h, w = I.shape[:2]
-  print 'map'
 
-  # make projection
   proj = zeros(I.shape)
   for i in range(h):
     for j in range(w):
-        x, y = mapPoint(H, (j, i))
-        if x >= 0 and x <= w and y >= 0 and y <= h:
-          #print "("+str(j)+","+str(i)+") mapped to ("+str(x)+","+str(y)+")"
-          proj[y, x] = I[i, j]
+      x, y = mapPoint(H, (j, i))
+      if x >= 0 and x <= w and y >= 0 and y <= h:
+        proj[y, x] = I[i, j]
+
+  gray = proj.astype('uint8')
+  return gray
+
+def backmap(I, H):
+  h, w = I.shape[:2]
+
+  proj = zeros(I.shape)
+  for i in range(h):
+      for j in range(w):
+          x, y = mapPoint(H, (j, i))
+          if x >= 0 and x <= w and y >= 0 and y <= h:
+              # Nearest neighbor
+              proj[i, j] = I[y, x]
+              # TODO: interpolation
 
   gray = proj.astype('uint8')
   return gray

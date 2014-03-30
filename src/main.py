@@ -8,7 +8,7 @@ import homography as hom
 
 def main():
   cam.init()
-  #dis.init(1024, 768)
+  #dis.init(1920, 1080)
 
   # get homography
   img = cam.read()
