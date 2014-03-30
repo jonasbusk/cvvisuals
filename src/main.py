@@ -6,30 +6,35 @@ import display as dis
 import homography as hom
 
 
+def calibrate():
+  print 'Calibrate.'
+  # get homography
+  img = cam.read()
+  gray = vis.gray(img)
+  H = hom.get_H(gray)
+  dis.set_H(H)
+
 def main():
   cam.init()
   #dis.init(1920, 1080)
 
-  # get homography
-  img = cam.read()
-  H = hom.get_H(img)
-  dis.set_H(H)
-
   while(True):
-    # Capture frame-by-frame
+    # capture frame-by-frame
     img = cam.read()
 
-    # Our operations on the frame come here
+    # our operations on the frame come here
     gray = vis.gray(img)
 
-    # Display the resulting frame
+    # display the resulting frame
     dis.show(gray)
 
-    # Handle key input
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    # handle key input
+    if cv2.waitKey(1) & 0xFF == ord('q'): # quit
         break
+    if cv2.waitKey(1) & 0xFF == ord('c'): # calibrate
+        calibrate()
 
-  # Clean up camera
+  # clean up camera
   cam.destroy()
 
 if __name__ == "__main__":
